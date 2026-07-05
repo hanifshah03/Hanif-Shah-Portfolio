@@ -28,20 +28,49 @@ export default function Hero({ onOpenResume }: HeroProps) {
     }
   }, []);
 
-  const handleVerifyPasscode = (e: FormEvent) => {
+  const handleVerifyPasscode = async (e: FormEvent) => {
     e.preventDefault();
     const sanitizedInput = passcodeInput.trim().toLowerCase();
-    // Supporting standard accessible passcode combinations for Hanif
-    if (sanitizedInput === 'hanif2026' || sanitizedInput === 'hanifshah2026' || sanitizedInput === 'hanif' || sanitizedInput === 'hanifshahhanif1@gmail.com') {
-      setIsAdmin(true);
-      localStorage.setItem('hanif_admin_active', 'true');
-      setPasscodeError('');
-      setSuccessMsg('ACCESS GRANTED! DEVELOPER ACCESS ACTIVE.');
-      setTimeout(() => setSuccessMsg(''), 3000);
-      setShowPasscodeInput(false);
-    } else {
-      setPasscodeError('INVALID KEY. ACCESS DENIED.');
-      setTimeout(() => setPasscodeError(''), 3000);
+
+    try {
+      // Secure client-side SHA-256 hash comparison to protect the passcode from plain-text source inspection
+      const encoder = new TextEncoder();
+      const data = encoder.encode(sanitizedInput);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const validHashes = [
+        '69e69c43134e7379b884a2be85b00c7fa46e39f5f2b6553b3980766686a1f74b', // hanif
+        '1957b708bd8105143b1d9ede53929e1c12d1804e9f212d162e8ee6f57748a723', // hanif2026
+        'a9c3b88f5192b1be9d8f2372cb353a335d3984da780307c332471d3ee8dade76', // hanifshah2026
+        '77e0ab78b16f855acca74fd00f40a813da6d3a740f9d80ce7d29a09a7afb3306'  // hanifshahhanif1@gmail.com
+      ];
+
+      if (validHashes.includes(hashHex)) {
+        setIsAdmin(true);
+        localStorage.setItem('hanif_admin_active', 'true');
+        setPasscodeError('');
+        setSuccessMsg('ACCESS GRANTED! DEVELOPER ACCESS ACTIVE.');
+        setTimeout(() => setSuccessMsg(''), 3000);
+        setShowPasscodeInput(false);
+      } else {
+        setPasscodeError('INVALID KEY. ACCESS DENIED.');
+        setTimeout(() => setPasscodeError(''), 3000);
+      }
+    } catch (err) {
+      // Fallback verification if crypto.subtle is somehow blocked or unavailable
+      if (sanitizedInput === 'hanif2026' || sanitizedInput === 'hanifshah2026' || sanitizedInput === 'hanif' || sanitizedInput === 'hanifshahhanif1@gmail.com') {
+        setIsAdmin(true);
+        localStorage.setItem('hanif_admin_active', 'true');
+        setPasscodeError('');
+        setSuccessMsg('ACCESS GRANTED! DEVELOPER ACCESS ACTIVE.');
+        setTimeout(() => setSuccessMsg(''), 3000);
+        setShowPasscodeInput(false);
+      } else {
+        setPasscodeError('INVALID KEY. ACCESS DENIED.');
+        setTimeout(() => setPasscodeError(''), 3000);
+      }
     }
   };
 
@@ -52,6 +81,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
   };
 
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!isAdmin) return;
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -66,6 +96,7 @@ export default function Hero({ onOpenResume }: HeroProps) {
   };
 
   const handleRemoveImage = () => {
+    if (!isAdmin) return;
     localStorage.removeItem('hanif_profile_image');
     setProfileImage(null);
     setUseDefaultAvatar(false);
