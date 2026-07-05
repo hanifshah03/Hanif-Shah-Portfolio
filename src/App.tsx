@@ -10,6 +10,7 @@ import Timeline from './components/Timeline';
 import Contact from './components/Contact';
 import ResumeModal from './components/ResumeModal';
 import QuickLinksFab from './components/QuickLinksFab';
+import ScrollReveal from './components/ScrollReveal';
 
 export default function App() {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
@@ -51,12 +52,30 @@ export default function App() {
         {/* Scrollable Layout Sections */}
         <main className="w-full">
           <Hero onOpenResume={() => setIsResumeOpen(true)} />
-          <About />
-          <Education />
-          <TechStack />
-          <Projects />
-          <Timeline />
-          <Contact />
+          
+          <ScrollReveal direction="up" delay={0.1}>
+            <About />
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.1}>
+            <Education />
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.1}>
+            <TechStack />
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.1}>
+            <Projects />
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.1}>
+            <Timeline />
+          </ScrollReveal>
+          
+          <ScrollReveal direction="up" delay={0.1}>
+            <Contact />
+          </ScrollReveal>
         </main>
       </div>
 
