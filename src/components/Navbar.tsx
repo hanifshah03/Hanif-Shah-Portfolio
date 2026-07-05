@@ -117,7 +117,7 @@ export default function Navbar({ onOpenResume, theme, onToggleTheme }: NavbarPro
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden min-w-[48px] min-h-[48px] p-2.5 rounded-lg bg-slate-950/40 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-all duration-300 flex items-center justify-center"
+          className="md:hidden p-2 rounded-lg bg-slate-950/40 border border-slate-800 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-all duration-300"
           aria-label="Toggle menu"
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -126,19 +126,19 @@ export default function Navbar({ onOpenResume, theme, onToggleTheme }: NavbarPro
 
       {/* Mobile Drawer Overlay */}
       <div
-        className={`fixed inset-0 top-[64px] bg-slate-950/98 backdrop-blur-xl z-40 transition-all duration-300 md:hidden flex flex-col justify-between p-8 border-t border-slate-900 ${
-          isOpen ? 'translate-x-0 opacity-100 pointer-events-auto' : 'translate-x-full opacity-0 pointer-events-none'
+        className={`fixed inset-0 top-[60px] bg-slate-950/95 backdrop-blur-lg z-40 transition-all duration-300 md:hidden flex flex-col justify-between p-8 border-t border-slate-900 ${
+          isOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
         }`}
       >
-        <ul className="flex flex-col gap-5 font-display text-base tracking-widest text-slate-300 font-semibold">
+        <ul className="flex flex-col gap-6 font-display text-lg tracking-widest text-slate-300 font-semibold">
           {navLinks.map((link) => (
             <li key={link.name}>
               <a
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 min-h-[48px] py-2 border-b border-slate-900/60 hover:text-cyan-400 hover:border-cyan-500/30 transition-all duration-300"
+                className="flex items-center gap-3 py-2 border-b border-slate-900 hover:text-cyan-400 hover:border-cyan-500/30 transition-all duration-300"
               >
-                <Cpu className="w-4 h-4 text-cyan-500 shrink-0" />
+                <Cpu className="w-4 h-4 text-cyan-500" />
                 {link.name}
               </a>
             </li>
@@ -149,9 +149,9 @@ export default function Navbar({ onOpenResume, theme, onToggleTheme }: NavbarPro
                 setIsOpen(false);
                 onOpenResume();
               }}
-              className="w-full flex items-center gap-3 min-h-[48px] py-2 border-b border-slate-900/60 text-cyan-400 hover:text-cyan-300 font-display text-left font-semibold transition-all cursor-pointer"
+              className="w-full flex items-center gap-3 py-2 border-b border-slate-900 text-cyan-400 hover:text-cyan-300 font-display text-left font-semibold transition-all cursor-pointer"
             >
-              <Cpu className="w-4 h-4 text-cyan-500 animate-pulse shrink-0" />
+              <Cpu className="w-4 h-4 text-cyan-500 animate-pulse" />
               RESUME (PRINT/PDF)
             </button>
           </li>
@@ -160,19 +160,19 @@ export default function Navbar({ onOpenResume, theme, onToggleTheme }: NavbarPro
               onClick={() => {
                 onToggleTheme();
               }}
-              className="w-full flex items-center justify-between min-h-[48px] py-2 border-b border-slate-900/60 text-slate-300 hover:text-cyan-400 font-display text-left font-semibold transition-all cursor-pointer"
+              className="w-full flex items-center justify-between py-2 border-b border-slate-900 text-slate-300 hover:text-cyan-400 font-display text-left font-semibold transition-all cursor-pointer"
             >
               <div className="flex items-center gap-3">
-                <Cpu className="w-4 h-4 text-cyan-500 shrink-0" />
+                <Cpu className="w-4 h-4 text-cyan-500" />
                 <span>THEME: {theme.toUpperCase()}</span>
               </div>
-              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500 animate-spin-slow shrink-0" /> : <Moon className="w-4 h-4 text-blue-500 shrink-0" />}
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500 animate-spin-slow" /> : <Moon className="w-4 h-4 text-blue-500" />}
             </button>
           </li>
         </ul>
 
         {/* Mobile Social Drawer Footer */}
-        <div className="flex flex-col gap-4 border-t border-slate-900/80 pt-8">
+        <div className="flex flex-col gap-4 border-t border-slate-900 pt-8">
           <p className="text-xs font-mono text-slate-500 tracking-wider text-center">
             CONNECT WITH HANIF SHAH
           </p>
@@ -181,7 +181,7 @@ export default function Navbar({ onOpenResume, theme, onToggleTheme }: NavbarPro
               href={DEVELOPER_PROFILE.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="min-w-[48px] min-h-[48px] flex items-center justify-center p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-all duration-300"
+              className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-all duration-300"
             >
               <Github className="w-5 h-5" />
             </a>
@@ -189,13 +189,13 @@ export default function Navbar({ onOpenResume, theme, onToggleTheme }: NavbarPro
               href={DEVELOPER_PROFILE.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="min-w-[48px] min-h-[48px] flex items-center justify-center p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-all duration-300"
+              className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-all duration-300"
             >
               <Linkedin className="w-5 h-5" />
             </a>
             <a
               href={`mailto:${DEVELOPER_PROFILE.email}`}
-              className="min-w-[48px] min-h-[48px] flex items-center justify-center p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-all duration-300"
+              className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 transition-all duration-300"
             >
               <Mail className="w-5 h-5" />
             </a>

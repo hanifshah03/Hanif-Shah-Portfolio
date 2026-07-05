@@ -17,18 +17,6 @@
     scrollbar-width: thin;
     scrollbar-color: #1f2937 #030712;
   }
-
-  @media (min-width: 1024px) {
-    html {
-      scroll-snap-type: y mandatory;
-    }
-  }
-
-  @media (max-width: 1023px) {
-    html {
-      scroll-snap-type: none;
-    }
-  }
   
   body {
     font-family: var(--font-sans);
@@ -43,12 +31,6 @@
   section {
     scroll-snap-align: start;
     scroll-snap-stop: normal;
-  }
-
-  @media (max-width: 1023px) {
-    section {
-      scroll-snap-align: none;
-    }
   }
 
   /* Custom sleek scrollbar for cybertech theme */
