@@ -10,12 +10,24 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: y proximity;
     scroll-padding-top: 5rem; /* Offsets for sticky cyber navbar */
     background-color: #030712; /* Default deep slate/black background */
     color: #f3f4f6;
     scrollbar-width: thin;
     scrollbar-color: #1f2937 #030712;
+  }
+
+  @media (min-width: 1024px) {
+    html {
+      scroll-snap-type: y mandatory;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    html {
+      scroll-snap-type: none;
+    }
   }
   
   body {
@@ -29,8 +41,14 @@
   }
 
   section {
-    scroll-snap-align: center;
+    scroll-snap-align: start;
     scroll-snap-stop: normal;
+  }
+
+  @media (max-width: 1023px) {
+    section {
+      scroll-snap-align: none;
+    }
   }
 
   /* Custom sleek scrollbar for cybertech theme */

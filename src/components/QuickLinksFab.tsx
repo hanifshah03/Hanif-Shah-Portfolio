@@ -149,10 +149,10 @@ export default function QuickLinksFab({ onOpenResume }: QuickLinksFabProps) {
                     {/* Action Circle Button */}
                     <button
                       onClick={action.onClick}
-                      className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${action.color} ${action.shadow}`}
+                      className={`w-12 h-12 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all cursor-pointer shrink-0 ${action.color} ${action.shadow}`}
                       title={action.label}
                     >
-                      <Icon className="w-4.5 h-4.5" />
+                      <Icon className="w-5 h-5 md:w-4.5 md:h-4.5" />
                     </button>
                   </motion.div>
                 );
