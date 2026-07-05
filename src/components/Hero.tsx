@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
-import { ArrowDown, Code2, ArrowUpRight, Cpu, FileText, Camera, Trash2, Image, MapPin, Lock, Unlock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowDown, Code2, ArrowUpRight, Cpu, FileText, MapPin } from 'lucide-react';
 import { DEVELOPER_PROFILE } from '../types';
 
 interface HeroProps {
@@ -9,101 +9,15 @@ interface HeroProps {
 export default function Hero({ onOpenResume }: HeroProps) {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [useDefaultAvatar, setUseDefaultAvatar] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [passcodeInput, setPasscodeInput] = useState<string>('');
-  const [showPasscodeInput, setShowPasscodeInput] = useState<boolean>(false);
-  const [passcodeError, setPasscodeError] = useState<string>('');
-  const [successMsg, setSuccessMsg] = useState<string>('');
 
-  // Load custom profile photo and admin active state from localStorage if it exists
+  // Load custom profile photo from localStorage if it exists
   useEffect(() => {
     const savedImage = localStorage.getItem('hanif_profile_image');
     if (savedImage) {
       setProfileImage(savedImage);
     }
-    const savedAdmin = localStorage.getItem('hanif_admin_active');
-    if (savedAdmin === 'true') {
-      setIsAdmin(true);
-    }
   }, []);
 
-  const handleVerifyPasscode = async (e: FormEvent) => {
-    e.preventDefault();
-    const sanitizedInput = passcodeInput.trim().toLowerCase();
-
-    try {
-      // Secure client-side SHA-256 hash comparison to protect the passcode from plain-text source inspection
-      const encoder = new TextEncoder();
-      const data = encoder.encode(sanitizedInput);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-      const validHashes = [
-        '69e69c43134e7379b884a2be85b00c7fa46e39f5f2b6553b3980766686a1f74b', // hanif
-        '1957b708bd8105143b1d9ede53929e1c12d1804e9f212d162e8ee6f57748a723', // hanif2026
-        'a9c3b88f5192b1be9d8f2372cb353a335d3984da780307c332471d3ee8dade76', // hanifshah2026
-        '77e0ab78b16f855acca74fd00f40a813da6d3a740f9d80ce7d29a09a7afb3306'  // hanifshahhanif1@gmail.com
-      ];
-
-      if (validHashes.includes(hashHex)) {
-        setIsAdmin(true);
-        localStorage.setItem('hanif_admin_active', 'true');
-        setPasscodeError('');
-        setSuccessMsg('ACCESS GRANTED! DEVELOPER ACCESS ACTIVE.');
-        setTimeout(() => setSuccessMsg(''), 3000);
-        setShowPasscodeInput(false);
-      } else {
-        setPasscodeError('INVALID KEY. ACCESS DENIED.');
-        setTimeout(() => setPasscodeError(''), 3000);
-      }
-    } catch (err) {
-      // Fallback verification if crypto.subtle is somehow blocked or unavailable
-      if (sanitizedInput === 'hanif2026' || sanitizedInput === 'hanifshah2026' || sanitizedInput === 'hanif' || sanitizedInput === 'hanifshahhanif1@gmail.com') {
-        setIsAdmin(true);
-        localStorage.setItem('hanif_admin_active', 'true');
-        setPasscodeError('');
-        setSuccessMsg('ACCESS GRANTED! DEVELOPER ACCESS ACTIVE.');
-        setTimeout(() => setSuccessMsg(''), 3000);
-        setShowPasscodeInput(false);
-      } else {
-        setPasscodeError('INVALID KEY. ACCESS DENIED.');
-        setTimeout(() => setPasscodeError(''), 3000);
-      }
-    }
-  };
-
-  const handleLockAdmin = () => {
-    setIsAdmin(false);
-    localStorage.removeItem('hanif_admin_active');
-    setShowPasscodeInput(false);
-  };
-
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!isAdmin) return;
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        localStorage.setItem('hanif_profile_image', base64String);
-        setProfileImage(base64String);
-        setUseDefaultAvatar(false);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    if (!isAdmin) return;
-    localStorage.removeItem('hanif_profile_image');
-    setProfileImage(null);
-    setUseDefaultAvatar(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
   return (
     <section
       id="hero"
@@ -221,15 +135,6 @@ export default function Hero({ onOpenResume }: HeroProps) {
               
               {/* Interactive Laser Scanning line */}
               <div className="absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#06b6d4] z-30 animate-[bounce_5s_ease-in-out_infinite] pointer-events-none" />
-
-              {/* Hidden File Input for Live Profile Photo Upload */}
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                className="hidden"
-              />
 
               {(profileImage || !useDefaultAvatar) ? (
                 /* Dynamic real-photo container (loads uploaded photo OR default GitHub picture) */
@@ -377,121 +282,14 @@ export default function Hero({ onOpenResume }: HeroProps) {
                 </svg>
               )}
 
-              {/* Hover Interaction Overlay to Upload / Change Real Photo with Developer Passcode Lock */}
-              <div className="absolute inset-0 bg-slate-950/90 z-40 flex flex-col items-center justify-center gap-2.5 opacity-0 group-hover:opacity-100 transition-all duration-300 backdrop-blur-[3px]">
-                {!isAdmin ? (
-                  <div className="flex flex-col items-center justify-center p-4 w-full h-full text-center">
-                    {!showPasscodeInput ? (
-                      <>
-                        <Lock className="w-8 h-8 text-rose-500 mb-1 animate-pulse" />
-                        <span className="font-display font-bold text-[11px] tracking-wider text-rose-400 uppercase">
-                          OWNER ACCESS ONLY
-                        </span>
-                        <p className="font-mono text-[8.5px] text-slate-400 mt-1.5 mb-3 max-w-[190px] leading-relaxed">
-                          Only Hanif Shah has authority to change the profile picture.
-                        </p>
-                        <button
-                          onClick={() => {
-                            setShowPasscodeInput(true);
-                            setPasscodeInput('');
-                            setPasscodeError('');
-                          }}
-                          className="py-1.5 px-3 rounded bg-slate-900 border border-cyan-500/40 hover:bg-cyan-950/40 text-cyan-400 font-mono text-[9px] tracking-wider transition-all cursor-pointer hover:shadow-[0_0_8px_rgba(6,182,212,0.2)]"
-                        >
-                          ENTER ACCESS KEY
-                        </button>
-                      </>
-                    ) : (
-                      <form onSubmit={handleVerifyPasscode} className="w-full max-w-[210px] flex flex-col items-center gap-2 px-2">
-                        <span className="font-mono text-[8px] text-cyan-400 tracking-wider">INPUT DEPLOYMENT KEY</span>
-                        <input
-                          type="password"
-                          placeholder="••••••••"
-                          value={passcodeInput}
-                          onChange={(e) => setPasscodeInput(e.target.value)}
-                          className="w-full text-center font-mono text-xs py-1.5 px-2 rounded bg-slate-900 border border-cyan-500/30 text-cyan-300 focus:outline-none focus:border-cyan-400 placeholder-slate-700"
-                          autoFocus
-                        />
-                        {passcodeError && (
-                          <p className="font-mono text-[7.5px] text-rose-400 animate-bounce">{passcodeError}</p>
-                        )}
-                        <div className="flex gap-2 w-full mt-1">
-                          <button
-                            type="button"
-                            onClick={() => setShowPasscodeInput(false)}
-                            className="flex-1 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400 font-mono text-[8.5px] cursor-pointer"
-                          >
-                            CANCEL
-                          </button>
-                          <button
-                            type="submit"
-                            className="flex-1 py-1 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-[8.5px] cursor-pointer"
-                          >
-                            VERIFY
-                          </button>
-                        </div>
-                      </form>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center p-4 w-full h-full text-center gap-2">
-                    <Unlock className="w-8 h-8 text-emerald-400 animate-pulse" />
-                    <span className="font-display font-bold text-[10px] tracking-wider text-emerald-400 uppercase">
-                      DEVELOPER ACCESS ACTIVE
-                    </span>
-                    
-                    <div className="flex flex-col gap-1.5 w-3/4 z-50">
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-full py-1.5 px-3 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-[10px] tracking-wider transition-all cursor-pointer shadow-[0_0_10px_rgba(6,182,212,0.3)]"
-                      >
-                        SELECT NEW PHOTO
-                      </button>
-                      
-                      {profileImage && (
-                        <button
-                          onClick={handleRemoveImage}
-                          className="w-full py-1.5 px-3 rounded border border-rose-500/50 hover:border-rose-400 hover:bg-rose-950/30 text-rose-400 font-mono text-[10px] tracking-wider transition-all cursor-pointer"
-                        >
-                          REMOVE PHOTO
-                        </button>
-                      )}
-                      
-                      <button
-                        onClick={handleLockAdmin}
-                        className="w-full py-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-300 font-mono text-[8px] tracking-wider cursor-pointer"
-                      >
-                        LOCK PROFILE ACCESS
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* Status Scanning Info Box inside */}
               <div className="absolute bottom-6 left-6 z-20 font-mono text-[10px] text-cyan-400 tracking-wider space-y-0.5 opacity-90 pointer-events-none">
                 <p>ID: SHAH.HANIF.22</p>
-                <p>STATUS: {isAdmin ? "DEV_UNLOCKED" : "LOCKED_SECURE"}</p>
+                <p>STATUS: LOCKED_SECURE</p>
                 <p>ROLE: AI_ML_DEVELOPER</p>
               </div>
 
             </div>
-
-            {/* Handset Upload Access Button for Non-Hover viewports */}
-            <button
-              onClick={() => {
-                if (isAdmin) {
-                  fileInputRef.current?.click();
-                } else {
-                  // Prompt password by triggering the passcodeInput state
-                  setShowPasscodeInput(true);
-                }
-              }}
-              className="absolute bottom-6 right-6 lg:hidden z-30 p-2.5 rounded-full bg-slate-900/95 border border-cyan-500/30 text-cyan-400 hover:text-cyan-300 active:scale-95 shadow-lg flex items-center justify-center cursor-pointer transition-all"
-              title={isAdmin ? "Upload Profile Photo" : "Authenticate Owner"}
-            >
-              {isAdmin ? <Camera className="w-4 h-4 animate-pulse" /> : <Lock className="w-4 h-4 text-rose-400" />}
-            </button>
 
             {/* Glowing Corner Accents */}
             <div className="absolute top-8 left-8 w-4 h-4 border-t-2 border-l-2 border-cyan-400" />
